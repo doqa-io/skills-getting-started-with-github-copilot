@@ -154,3 +154,39 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.participant-card {
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.participant-card h4 {
+  margin-bottom: 10px;
+  color: #1a237e;
+  font-size: 18px;
+}
+
+.participant-card p {
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+.participant-card .details {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.participant-card .details span {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
