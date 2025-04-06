@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  const unregisterForm = document.getElementById("unregister-form");
+  const unregisterMessageDiv = document.getElementById("unregister-message");
+  const unregisterActivitySelect = document.getElementById("unregister-activity");
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -42,6 +46,24 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       activitiesList.innerHTML = "<p>Failed to load activities. Please try again later.</p>";
       console.error("Error fetching activities:", error);
+    }
+  }
+
+  // Populate unregister activity dropdown
+  async function populateUnregisterDropdown() {
+    try {
+      const response = await fetch("/activities");
+      const activities = await response.json();
+
+      unregisterActivitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
+      Object.keys(activities).forEach((name) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        unregisterActivitySelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Error populating unregister dropdown:", error);
     }
   }
 
@@ -85,6 +107,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Handle unregister form submission
+  unregisterForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const email = document.getElementById("unregister-email").value;
+    const activity = document.getElementById("unregister-activity").value;
+
+    try {
+      const response = await fetch(
+        `/activities/${encodeURIComponent(activity)}/unregister?email=${encodeURIComponent(email)}`,
+        {
+          method: "POST",
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        unregisterMessageDiv.textContent = result.message;
+        unregisterMessageDiv.className = "success";
+        unregisterForm.reset();
+        fetchActivities(); // Refresh activities list
+      } else {
+        unregisterMessageDiv.textContent = result.detail || "An error occurred";
+        unregisterMessageDiv.className = "error";
+      }
+
+      unregisterMessageDiv.classList.remove("hidden");
+
+      // Hide message after 5 seconds
+      setTimeout(() => {
+        unregisterMessageDiv.classList.add("hidden");
+      }, 5000);
+    } catch (error) {
+      unregisterMessageDiv.textContent = "Failed to unregister. Please try again.";
+      unregisterMessageDiv.className = "error";
+      unregisterMessageDiv.classList.remove("hidden");
+      console.error("Error unregistering:", error);
+    }
+  });
+
   // Initialize app
   fetchActivities();
+  populateUnregisterDropdown();
 });
